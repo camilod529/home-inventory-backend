@@ -3,8 +3,11 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Inventory } from '../../inventory/entities/inventory.entity';
+import { ModificationHistory } from '../../inventory/entities/modificationHistory.entity';
 
 @Entity('users')
 export class User {
@@ -39,6 +42,15 @@ export class User {
     default: false,
   })
   deleted: boolean;
+
+  @OneToMany(() => Inventory, (inventory) => inventory.created_by)
+  created_inventories: Inventory[];
+
+  @OneToMany(
+    () => ModificationHistory,
+    (modificationHistory) => modificationHistory.user,
+  )
+  modification_histories: ModificationHistory[];
 
   @BeforeInsert()
   emailToLowerCase() {
