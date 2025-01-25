@@ -3,6 +3,8 @@ import {
   BeforeUpdate,
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -51,6 +53,10 @@ export class User {
     (modificationHistory) => modificationHistory.user,
   )
   modification_histories: ModificationHistory[];
+
+  @ManyToMany(() => Inventory, (inventory) => inventory.users)
+  @JoinTable() // <-- Only on one side
+  inventories: Inventory[];
 
   @BeforeInsert()
   emailToLowerCase() {

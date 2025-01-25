@@ -9,7 +9,7 @@ export const GetUser = createParamDecorator(
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    if (!user) throw new InternalServerErrorException('User not found');
+    if (!user) throw new InternalServerErrorException('User not found!!!');
     return data ? user[data] : user;
   },
 );
