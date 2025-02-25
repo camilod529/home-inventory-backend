@@ -6,12 +6,16 @@ import {
   Body,
   Param,
   ParseUUIDPipe,
+  Patch,
 } from '@nestjs/common';
 import { InventoryService } from './inventory.service';
 import { Auth, GetUser } from 'src/auth/decorators';
-import { CreateInventoryDto } from './dtos/create-inventory.dto';
-import { JoinInventoryDto } from './dtos/join-inventory.dto';
 import { User } from 'src/auth/entities/user.entity';
+import {
+  CreateInventoryDto,
+  JoinInventoryDto,
+  UpdateInventoryDto,
+} from './dtos';
 
 @Controller('inventory')
 export class InventoryController {
@@ -24,6 +28,15 @@ export class InventoryController {
     @GetUser() user: User,
   ) {
     return this.inventoryService.createInventory(createInventoryDto, user);
+  }
+
+  @Get(':id')
+  @Auth()
+  getInventoryById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @GetUser() user: User,
+  ) {
+    return this.inventoryService.getInventoryById(id, user);
   }
 
   @Get()
@@ -39,6 +52,16 @@ export class InventoryController {
     @GetUser() user: User,
   ) {
     return this.inventoryService.joinInventory(joinInventoryDto, user);
+  }
+
+  @Patch(':id')
+  @Auth()
+  updateInventory(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateInventoryDto: UpdateInventoryDto,
+    @GetUser() user: User,
+  ) {
+    return this.inventoryService.updateInventory(id, updateInventoryDto, user);
   }
 
   @Delete(':id')

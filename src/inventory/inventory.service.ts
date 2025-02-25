@@ -7,8 +7,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { Repository } from 'typeorm';
 import { Inventory } from './entities/inventory.entity';
-import { CreateInventoryDto } from './dtos/create-inventory.dto';
-import { JoinInventoryDto } from './dtos/join-inventory.dto';
+import {
+  CreateInventoryDto,
+  JoinInventoryDto,
+  UpdateInventoryDto,
+} from './dtos';
 
 @Injectable()
 export class InventoryService {
@@ -46,6 +49,21 @@ export class InventoryService {
     });
   }
 
+  async getInventoryById(id: string, user: User) {
+    const inventory = await this.inventoryRepository.findOne({
+      where: { id },
+      relations: ['owner', 'members'],
+    });
+
+    if (!inventory) throw new NotFoundException('Inventory not found');
+
+    const isMember = inventory.members.some((member) => member.id === user.id);
+    if (!isMember && inventory.owner.id !== user.id)
+      throw new ForbiddenException('You do not have access to this inventory');
+
+    return inventory;
+  }
+
   async joinInventory(joinInventoryDto: JoinInventoryDto, user: User) {
     const { code } = joinInventoryDto;
 
@@ -66,6 +84,26 @@ export class InventoryService {
     await this.inventoryRepository.save(inventory);
 
     return inventory;
+  }
+
+  async updateInventory(
+    id: string,
+    updateInventoryDto: UpdateInventoryDto,
+    user: User,
+  ) {
+    const inventory = await this.inventoryRepository.findOne({
+      where: { id },
+      relations: ['owner'],
+    });
+
+    if (!inventory) throw new NotFoundException('Inventory not found');
+
+    if (inventory.owner.id !== user.id)
+      throw new ForbiddenException('You are not the owner of this inventory');
+
+    Object.assign(inventory, updateInventoryDto);
+
+    return this.inventoryRepository.save(inventory);
   }
 
   async deleteInventory(id: string, user: User) {
