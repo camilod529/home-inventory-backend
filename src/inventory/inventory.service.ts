@@ -81,4 +81,54 @@ export class InventoryService {
 
     await this.inventoryRepository.softRemove(inventory);
   }
+
+  async removeMember(inventoryId: string, memberId: string, owner: User) {
+    const inventory = await this.inventoryRepository.findOne({
+      where: { id: inventoryId },
+      relations: ['owner', 'members'],
+    });
+
+    if (!inventory) throw new NotFoundException('Inventory not found');
+
+    if (inventory.owner.id !== owner.id)
+      throw new ForbiddenException('You are not the owner of this inventory');
+
+    const memberIndex = inventory.members.findIndex(
+      (member) => member.id === memberId,
+    );
+
+    if (memberIndex === -1)
+      throw new NotFoundException('Member not found in this inventory');
+
+    inventory.members.splice(memberIndex, 1);
+
+    await this.inventoryRepository.save(inventory);
+
+    return { message: 'Member removed successfully' };
+  }
+
+  async leaveInventory(inventoryId: string, user: User) {
+    const inventory = await this.inventoryRepository.findOne({
+      where: { id: inventoryId },
+      relations: ['owner', 'members'],
+    });
+
+    if (!inventory) throw new NotFoundException('Inventory not found');
+
+    if (inventory.owner.id === user.id)
+      throw new ForbiddenException('The owner cannot leave the inventory');
+
+    const memberIndex = inventory.members.findIndex(
+      (member) => member.id === user.id,
+    );
+
+    if (memberIndex === -1)
+      throw new NotFoundException('You are not a member of this inventory');
+
+    inventory.members.splice(memberIndex, 1);
+
+    await this.inventoryRepository.save(inventory);
+
+    return { message: 'You have left the inventory' };
+  }
 }

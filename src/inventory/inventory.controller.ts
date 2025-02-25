@@ -49,4 +49,23 @@ export class InventoryController {
   ) {
     return this.inventoryService.deleteInventory(id, user);
   }
+
+  @Delete(':id/members/:memberId')
+  @Auth()
+  removeMember(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('memberId', ParseUUIDPipe) memberId: string,
+    @GetUser() user: User,
+  ) {
+    return this.inventoryService.removeMember(id, memberId, user);
+  }
+
+  @Delete(':inventoryId/leave')
+  @Auth()
+  leaveInventory(
+    @Param('inventoryId', ParseUUIDPipe) inventoryId: string,
+    @GetUser() user: User,
+  ) {
+    return this.inventoryService.leaveInventory(inventoryId, user);
+  }
 }
