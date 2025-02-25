@@ -14,6 +14,7 @@ import { User } from 'src/auth/entities/user.entity';
 import {
   CreateInventoryDto,
   JoinInventoryDto,
+  TransferInventoryDto,
   UpdateInventoryDto,
 } from './dtos';
 
@@ -62,6 +63,20 @@ export class InventoryController {
     @GetUser() user: User,
   ) {
     return this.inventoryService.updateInventory(id, updateInventoryDto, user);
+  }
+
+  @Patch(':id/transfer')
+  @Auth()
+  transferOwnership(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() transferInventoryDto: TransferInventoryDto,
+    @GetUser() user: User,
+  ) {
+    return this.inventoryService.transferOwnership(
+      id,
+      transferInventoryDto,
+      user,
+    );
   }
 
   @Delete(':id')

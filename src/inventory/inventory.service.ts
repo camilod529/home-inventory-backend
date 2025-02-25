@@ -10,6 +10,7 @@ import { Inventory } from './entities/inventory.entity';
 import {
   CreateInventoryDto,
   JoinInventoryDto,
+  TransferInventoryDto,
   UpdateInventoryDto,
 } from './dtos';
 
@@ -102,6 +103,38 @@ export class InventoryService {
       throw new ForbiddenException('You are not the owner of this inventory');
 
     Object.assign(inventory, updateInventoryDto);
+
+    return this.inventoryRepository.save(inventory);
+  }
+
+  async transferOwnership(
+    id: string,
+    transferInventoryDto: TransferInventoryDto,
+    user: User,
+  ) {
+    const inventory = await this.inventoryRepository.findOne({
+      where: { id },
+      relations: ['owner', 'members'],
+    });
+
+    if (!inventory) throw new NotFoundException('Inventory not found');
+
+    if (inventory.owner.id !== user.id)
+      throw new ForbiddenException('Only the owner can transfer ownership');
+
+    const newOwner = await this.userRepository.findOne({
+      where: { id: transferInventoryDto.newOwnerId },
+    });
+
+    if (
+      !newOwner ||
+      !inventory.members.some((member) => member.id === newOwner.id)
+    )
+      throw new NotFoundException(
+        'New owner must be a member of the inventory',
+      );
+
+    inventory.owner = newOwner;
 
     return this.inventoryRepository.save(inventory);
   }
