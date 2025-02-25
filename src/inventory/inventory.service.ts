@@ -65,6 +65,21 @@ export class InventoryService {
     return inventory;
   }
 
+  async getInventoryMembers(id: string, user: User) {
+    const inventory = await this.inventoryRepository.findOne({
+      where: { id },
+      relations: ['owner', 'members'],
+    });
+
+    if (!inventory) throw new NotFoundException('Inventory not found');
+
+    const isMember = inventory.members.some((member) => member.id === user.id);
+    if (!isMember && inventory.owner.id !== user.id)
+      throw new ForbiddenException('You do not have access to this inventory');
+
+    return inventory.members;
+  }
+
   async joinInventory(joinInventoryDto: JoinInventoryDto, user: User) {
     const { code } = joinInventoryDto;
 

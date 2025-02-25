@@ -46,6 +46,15 @@ export class InventoryController {
     return this.inventoryService.getUserInventories(user);
   }
 
+  @Get(':id/members')
+  @Auth()
+  getInventoryMembers(
+    @Param('id', ParseUUIDPipe) id: string,
+    @GetUser() user: User,
+  ) {
+    return this.inventoryService.getInventoryMembers(id, user);
+  }
+
   @Post('join')
   @Auth()
   joinInventory(
