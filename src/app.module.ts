@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
+import { InventoryModule } from './inventory/inventory.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AuthModule } from './auth/auth.module';
       synchronize: process.env.TYPEORM_SYNCHRONIZE === 'true', // Convierte string a booleano
     }),
     AuthModule,
+    InventoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

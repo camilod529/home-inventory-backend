@@ -1,9 +1,12 @@
+import { Inventory } from 'src/inventory/entities/inventory.entity';
 import {
   BeforeInsert,
   BeforeUpdate,
   Column,
   DeleteDateColumn,
   Entity,
+  ManyToMany,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -43,6 +46,13 @@ export class User {
 
   @DeleteDateColumn()
   deletedAt?: Date;
+
+  // Relation with Inventory entity
+  @OneToMany(() => Inventory, (inventory) => inventory.owner)
+  ownedInventories: Inventory[];
+
+  @ManyToMany(() => Inventory, (inventory) => inventory.members)
+  inventories: Inventory[];
 
   @BeforeInsert()
   emailToLowerCase() {
