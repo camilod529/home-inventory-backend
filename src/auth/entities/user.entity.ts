@@ -2,6 +2,7 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Column,
+  DeleteDateColumn,
   Entity,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -39,6 +40,9 @@ export class User {
     default: false,
   })
   deleted: boolean;
+
+  @DeleteDateColumn()
+  deletedAt?: Date;
 
   @BeforeInsert()
   emailToLowerCase() {

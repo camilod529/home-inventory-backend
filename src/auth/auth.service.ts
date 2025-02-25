@@ -3,6 +3,7 @@ import {
   BadRequestException,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -44,7 +45,7 @@ export class AuthService {
   async login(loginUserDto: LoginUserDto) {
     const { email, password } = loginUserDto;
     const user = await this.userRepository.findOne({
-      where: { email },
+      where: { email, deleted: false },
       select: {
         email: true,
         password: true,
@@ -65,6 +66,16 @@ export class AuthService {
     const { password: _, ...userWithoutPassword } = user;
 
     return { ...userWithoutPassword, token: this.getJWT({ id: user.id }) };
+  }
+
+  async softDelete(id: string) {
+    const user = await this.userRepository.findOne({ where: { id } });
+
+    if (!user) throw new NotFoundException('User not found');
+
+    user.deleted = true;
+
+    return this.userRepository.softRemove(user);
   }
 
   checkAuthStatus(user: User) {
