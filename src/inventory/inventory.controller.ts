@@ -17,13 +17,17 @@ import {
   TransferInventoryDto,
   UpdateInventoryDto,
 } from './dtos';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Inventory')
+@ApiBearerAuth()
 @Controller('inventory')
 export class InventoryController {
   constructor(private readonly inventoryService: InventoryService) {}
 
   @Post()
   @Auth()
+  @ApiOperation({ summary: 'Create an inventory' })
   createInventory(
     @Body() createInventoryDto: CreateInventoryDto,
     @GetUser() user: User,
