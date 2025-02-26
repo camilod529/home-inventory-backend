@@ -9,9 +9,11 @@ import {
   DeleteDateColumn,
   JoinTable,
   BeforeInsert,
+  OneToMany,
 } from 'typeorm';
 import { User } from 'src/auth/entities/user.entity';
 import { nanoid } from 'nanoid';
+import { Product } from 'src/product/entities/product.entity';
 
 @Entity()
 export class Inventory {
@@ -44,6 +46,9 @@ export class Inventory {
 
   @DeleteDateColumn()
   deletedAt?: Date; // Para soft delete
+
+  @OneToMany(() => Product, (product) => product.inventory, { cascade: true })
+  products: Product[];
 
   @BeforeInsert()
   generateCode() {

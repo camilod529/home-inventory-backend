@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './auth/auth.module';
 import { InventoryModule } from './inventory/inventory.module';
+import { ProductModule } from './product/product.module';
+import { ShoppingListModule } from './shopping-list/shopping-list.module';
 
 @Module({
   imports: [
@@ -21,6 +23,8 @@ import { InventoryModule } from './inventory/inventory.module';
     }),
     AuthModule,
     InventoryModule,
+    ProductModule,
+    ShoppingListModule,
   ],
   controllers: [AppController],
   providers: [AppService],
