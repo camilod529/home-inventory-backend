@@ -14,6 +14,7 @@ import {
 import { User } from 'src/auth/entities/user.entity';
 import { nanoid } from 'nanoid';
 import { Product } from 'src/product/entities/product.entity';
+import { ShoppingList } from 'src/shopping-list/entities/shopping-list.entity';
 
 @Entity()
 export class Inventory {
@@ -49,6 +50,9 @@ export class Inventory {
 
   @OneToMany(() => Product, (product) => product.inventory, { cascade: true })
   products: Product[];
+
+  @OneToMany(() => ShoppingList, (shoppingList) => shoppingList.inventory)
+  shoppingLists: ShoppingList[];
 
   @BeforeInsert()
   generateCode() {
