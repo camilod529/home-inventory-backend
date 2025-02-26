@@ -7,6 +7,7 @@ import { AuthModule } from './auth/auth.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { ProductModule } from './product/product.module';
 import { ShoppingListModule } from './shopping-list/shopping-list.module';
+import { NotificationsModule } from './notifications/notifications.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ShoppingListModule } from './shopping-list/shopping-list.module';
     InventoryModule,
     ProductModule,
     ShoppingListModule,
+    NotificationsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
